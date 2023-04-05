@@ -1,11 +1,5 @@
-# hfabapi
-API for Polhem and other devices, version where computations are done on PC.
-
-
-
-```C++
 //
-// Example for usage of the Haptikfabriken API 2023 edition in WINDOWS
+// Example for usage of the Haptikfabriken API 2023 edition
 //
 // There are two ways to interface with the API after calling open().
 // You can either implement a loop that calls getPos() and end with setForce(),
@@ -69,4 +63,3 @@ int main()
 
     hi.close();
 }
-```
