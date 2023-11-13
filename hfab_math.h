@@ -393,6 +393,10 @@ public:
 
 
     configuration m_config;
+
+    // Polhem 22 default 
+    int model{1};
+    int enc_home[6] = { 8312, -10366, 19764, 0, 30, 0 };
 };
 
 } // Namespace haptikfabriken

@@ -39,13 +39,11 @@ void HaptikfabrikenInterface::close(){
     sc = 0;
 }
 
-#ifdef VINTAGE
-Kinematics kinematics(Kinematics::configuration::vintage());
-constexpr int enc_home[] = { 0,7700,0,0,0,0 };
-#else
+// Now set within kinematics object
+//Kinematics kinematics(Kinematics::configuration::vintage());
+constexpr int enc_home_vintage[] = { 0,7700,0,0,0,0 };
 Kinematics kinematics(Kinematics::configuration::polhem_v3()); // polhem_v3() in haptikfabriken.h!
-constexpr int enc_home[] = { 8312, -10366, 19764, 0, 30, 0 };
-#endif
+constexpr int enc_home_polhem[] = { 8312, -10366, 19764, 0, 30, 0 };
 
 derived_values compute_values(const device_to_pc_message& m) {
     derived_values out;
@@ -96,9 +94,23 @@ fsVec3d HaptikfabrikenInterface::getPos(){
     if(sc->receive(new_msg)){ // Error reading, use
         std::cout << "in error reading\n";
     } else {
+
+        // have we changed kinematics?
+        if(kinematics.model != new_msg.model){
+            if(new_msg.model==1){
+                kinematics = Kinematics(Kinematics::configuration::polhem_v3());
+                for(int i=0;i<6;++i) kinematics.enc_home[i] = enc_home_polhem[i];
+            }
+            else if(new_msg.model==2){
+                kinematics = Kinematics(Kinematics::configuration::vintage());
+                for(int i=0;i<6;++i) kinematics.enc_home[i] = enc_home_vintage[i];
+            } else 
+                std::cout << "Unsupported kinematics model " << new_msg.model << "\n";
+        }
+
         // Add the encoder home position offset
         for(int i=0;i<6;++i)
-            new_msg.enc[i] += enc_home[i];
+            new_msg.enc[i] += kinematics.enc_home[i];
 
         msg_in = new_msg;
 
@@ -124,20 +136,19 @@ fsRot HaptikfabrikenInterface::getRot(){
     double tF = 0;
 
     int tF_count = msg_in.enc[5];
-#ifdef VINTAGE
-    tF = 2 * 3.1415926535897 * tF_count / 2000;
-#else
-    tF = 2 * 3.1415926535897 * tF_count / 1024;
-#endif
+    if(kinematics.model==model_vintage_raw)
+        tF = 2 * 3.1415926535897 * tF_count / 2000;
+    else
+        tF = 2 * 3.1415926535897 * tF_count / 1024;
+
 
     fsRot rA, rC, rD, rE, rF;
     rA.rot_z(values.tA);
     rC.rot_y(-values.lambda);
-#ifdef VINTAGE
-    rD.rot_z(values.tD);
-#else
-    rD.rot_x(values.tD);
-#endif
+    if(kinematics.model==model_vintage_raw)
+        rD.rot_z(values.tD);
+    else
+        rD.rot_x(values.tD);
     rE.rot_y(values.tE);
     rF.rot_x(tF);
 
