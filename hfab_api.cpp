@@ -106,6 +106,7 @@ fsVec3d HaptikfabrikenInterface::getPos(){
                 for(int i=0;i<6;++i) kinematics.enc_home[i] = enc_home_vintage[i];
             } else 
                 std::cout << "Unsupported kinematics model " << new_msg.model << "\n";
+            kinematics.model = new_msg.model;
         }
 
         // Add the encoder home position offset

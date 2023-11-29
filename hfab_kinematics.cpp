@@ -346,6 +346,8 @@ fsRot Kinematics::computeRotation(const int* encBase, const int* encRot, volatil
       return r;
     }
 
+    // NOTE 2023-11-29: Following code is never reached in current API, we "only return angles" above.
+
     // rotate about z (body a)
     fsRot rA;
     rA.rot_z(tA);
