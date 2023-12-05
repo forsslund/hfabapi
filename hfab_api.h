@@ -17,7 +17,6 @@
 
 //#define WINDOWS
 //#define LINUX
-//#define VINTAGE
 
 
 namespace haptikfabriken {
