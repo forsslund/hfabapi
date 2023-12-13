@@ -193,6 +193,7 @@ void HaptikfabrikenInterface::startCallback() {
 void HaptikfabrikenInterface::callbackLoop() {
     while (isRunning) {
         getPos(); // update values
+        values.orientation = getRot();
         fsVec3d force;
         if (callback) {
             force = callback(values);
