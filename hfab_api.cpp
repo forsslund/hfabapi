@@ -47,6 +47,7 @@ constexpr int enc_home_polhem[] = { 8312, -10366, 19764, 0, 30, 0 };
 
 derived_values compute_values(const device_to_pc_message& m) {
     derived_values out;
+    out.raw = m;
 
     // receive encoders, put in counter[0]-[5]
     int counter[] = { m.enc[0],m.enc[1],m.enc[2],m.enc[3],m.enc[4],m.enc[5] };

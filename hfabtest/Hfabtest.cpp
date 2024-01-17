@@ -23,7 +23,15 @@ fsVec3d myHapticFunction(derived_values values) {
     // compute a force to the center of the workspace
     fsVec3d force = 100 * (fsVec3d(0,0,0) - pos);
 
-    std::cout << "pos: " << toString(pos) <<  " force: " << toString(force) << std::endl;
+    //std::cout << "pos: " << toString(pos) <<  " force: " << toString(force) << std::endl;
+    std::cout << "model: " << values.raw.model << " encoders (before offset): " 
+        << values.raw.enc[0] << " "
+        << values.raw.enc[1] << " "
+        << values.raw.enc[2] << " "
+        << values.raw.enc[3] << " "
+        << values.raw.enc[4] << " "
+        << values.raw.enc[5] << " Error: "
+        << values.raw.error_code << "\n";
 
     // return force to be sent to device
     return force;
@@ -34,7 +42,7 @@ int main()
     std::cout << "Hello World!\n";
 
     HaptikfabrikenInterface hi;
-    hi.open("COM12"); // Find your port name in Windows Device Manager under "Ports".
+    hi.open("COM4"); // Find your port name in Windows Device Manager under "Ports".
 
 
     // Example with callback below. Please note that if your function is part of a class it

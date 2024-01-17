@@ -31,6 +31,7 @@ struct derived_values {
     double lambda{ 0 };
     double tD{ 0 };
     double tE{ 0 };
+    device_to_pc_message raw;
 };
 
 class HaptikfabrikenInterface {
