@@ -1,6 +1,8 @@
 #ifndef HFAB_SERIAL
 #define HFAB_SERIAL
+#if !defined(LINUX) && !defined(MACOSX) && !defined(WINDOWS)
 #define WINDOWS
+#endif
 #pragma warning(disable:4996)
 #include <iostream>
 
