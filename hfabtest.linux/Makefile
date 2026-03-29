@@ -9,10 +9,15 @@ SRCS = hfabtest.cpp \
 
 TARGET = hfabtest
 
+all: $(TARGET) woody_viz
+
 $(TARGET): $(SRCS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-clean:
-	rm -f $(TARGET)
+woody_viz: woody_viz.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $< -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
-.PHONY: clean
+clean:
+	rm -f $(TARGET) woody_viz
+
+.PHONY: clean all

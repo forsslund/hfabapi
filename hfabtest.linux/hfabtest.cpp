@@ -43,8 +43,13 @@ int main()
     std::cout << "Running haptic loop. Press any key to stop.\n";
     while (!kbhit()) {
         fsVec3d pos = hi.getPos();
+        auto raw = hi.getInMesg();
         fsVec3d force = 100 * (fsVec3d(0,0,0) - pos);
-        std::cout << "pos: " << toString(pos) << "  force: " << toString(force) << "\r" << std::flush;
+        printf("pos: (%7.3f,%7.3f,%7.3f)  enc: [%6d,%6d,%6d,%4d,%4d,%4d] model=%d err=%d  force: %s\r",
+               pos.m_x, pos.m_y, pos.m_z,
+               raw.enc[0], raw.enc[1], raw.enc[2], raw.enc[3], raw.enc[4], raw.enc[5],
+               raw.model, raw.error_code, toString(force).c_str());
+        fflush(stdout);
         hi.setForce(force);
     }
 

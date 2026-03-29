@@ -8,6 +8,7 @@ namespace haptikfabriken {
   // -----------------------------------------------------------------
   constexpr int model_polhem_2022_raw = 1;
   constexpr int model_vintage_raw = 2;
+  constexpr int model_woody_raw = 3;
   struct device_to_pc_message {
     int model{1};
     int enc[6] = {0,0,0,0,0,0};

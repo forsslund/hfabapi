@@ -284,7 +284,7 @@ public:
                               5.0, 1000.0, 8.0,
                               0.170, 0.110, 0.051, 0.091, 0,
                               0,0,0,0,0,0,
-                              0,1,0,0,0,0 };
+                              0,1,1,0,0,0 };
             return Kinematics::configuration(data);
         }
 
@@ -312,7 +312,7 @@ public:
                               5.0, 1000.0, 8.0,
                               0.170, 0.110, 0.051, 0.091, 0,
                               0,0,6000,0,0,0,
-                              0,0,0,0,0,0 };
+                              0,1,1,0,0,0 };
             return Kinematics::configuration(data, "woodenhaptics_v2015 hardcoded");
         }
 

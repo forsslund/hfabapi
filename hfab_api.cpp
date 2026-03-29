@@ -44,6 +44,7 @@ void HaptikfabrikenInterface::close(){
 constexpr int enc_home_vintage[] = { 0,7700,0,0,0,0 };
 Kinematics kinematics(Kinematics::configuration::polhem_v3()); // polhem_v3() in haptikfabriken.h!
 constexpr int enc_home_polhem[] = { 8312, -10366, 19764, 0, 30, 0 };
+constexpr int enc_home_woody[] = { 0, 0, -6000, 0, 0, 0 };
 
 derived_values compute_values(const device_to_pc_message& m) {
     derived_values out;
@@ -105,7 +106,11 @@ fsVec3d HaptikfabrikenInterface::getPos(){
             else if(new_msg.model==2){
                 kinematics = Kinematics(Kinematics::configuration::vintage());
                 for(int i=0;i<6;++i) kinematics.enc_home[i] = enc_home_vintage[i];
-            } else 
+            }
+            else if(new_msg.model==3){
+                kinematics = Kinematics(Kinematics::configuration::woodenhaptics_v2015());
+                for(int i=0;i<6;++i) kinematics.enc_home[i] = enc_home_woody[i];
+            } else
                 std::cout << "Unsupported kinematics model " << new_msg.model << "\n";
             kinematics.model = new_msg.model;
         }
