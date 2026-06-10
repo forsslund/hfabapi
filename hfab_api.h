@@ -40,6 +40,16 @@ public:
     int open(std::string port); // Returns 0 if success
     void close();
 
+    // Enumerate connected devices. On Linux/Mac this scans /dev/serial/by-id
+    // for a Teensy (all WoodenHaptics/Polhem firmware enumerate as
+    // "Teensyduino_USB_Serial_<id>") and fills serialport_name(s) with the
+    // matching /dev/ttyACMx node(s). Returns the number found -- 0 when nothing
+    // is connected (the by-id directory does not exist), so it never blocks on
+    // a non-existent port. On Windows it probes COM ports.
+    static unsigned int findUSBSerialDevices();
+    static std::string serialport_name;        // first detected port
+    static std::string serialport_names[10];   // up to 10 detected ports
+
 
     // If error, get error message here
     std::string getErrorCode();

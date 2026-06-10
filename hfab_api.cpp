@@ -3,7 +3,66 @@
 #include "hfab_serial.h"
 #include <thread>
 
+#if defined(WINDOWS)
+#include <windows.h>
+#else
+#include <dirent.h>
+#include <unistd.h>
+#include <climits>
+#endif
+
 namespace haptikfabriken {
+
+std::string HaptikfabrikenInterface::serialport_name;
+std::string HaptikfabrikenInterface::serialport_names[10];
+
+unsigned int HaptikfabrikenInterface::findUSBSerialDevices() {
+    serialport_name.clear();
+    for (int i = 0; i < 10; ++i) serialport_names[i].clear();
+
+#if defined(WINDOWS)
+    // Probe COM3..COM20; a device is present if the port can be opened.
+    unsigned int found = 0;
+    for (int i = 3; i <= 20 && found < 10; ++i) {
+        std::string port = "\\\\.\\COM" + std::to_string(i);
+        HANDLE h = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
+                               NULL, OPEN_EXISTING, 0, NULL);
+        if (h != INVALID_HANDLE_VALUE) {
+            CloseHandle(h);
+            if (found == 0) serialport_name = "COM" + std::to_string(i);
+            serialport_names[found++] = "COM" + std::to_string(i);
+        }
+    }
+    return found;
+#else
+    // Linux/Mac: the by-id directory only exists while a USB serial device is
+    // connected, so opendir fails fast (returns 0) when nothing is plugged in.
+    DIR* dir = opendir("/dev/serial/by-id");
+    if (dir == nullptr) return 0;
+
+    unsigned int found = 0;
+    struct dirent* ent;
+    while ((ent = readdir(dir)) != nullptr && found < 10) {
+        std::string name = ent->d_name;
+        if (name.find("Teensy") == std::string::npos) continue;
+
+        char buf[PATH_MAX];
+        std::string link = std::string("/dev/serial/by-id/") + name;
+        ssize_t n = readlink(link.c_str(), buf, sizeof(buf) - 1);
+        if (n <= 0) continue;
+        buf[n] = '\0';
+
+        std::string target(buf);                          // e.g. "../../ttyACM0"
+        size_t slash = target.find_last_of('/');
+        std::string node = "/dev/" + (slash == std::string::npos
+                                          ? target : target.substr(slash + 1));
+        if (found == 0) serialport_name = node;
+        serialport_names[found++] = node;
+    }
+    closedir(dir);
+    return found;
+#endif
+}
 
 // -----------------------------------------------------------------------------
 // Haptikfabriken code
